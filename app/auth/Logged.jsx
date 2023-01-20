@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { signOut } from "next-auth/react"
 
 export default function Logged({ image }) {
@@ -7,7 +8,13 @@ export default function Logged({ image }) {
   return (
     <li className="flex gap-8">
       <button onClick={() => signOut()}>Sign Out</button>
-      <img className="w-16 rounded-full" src={image} alt="" />
+      <Image
+        width={64}
+        height={64}
+        className="w-12 rounded-full"
+        src={image}
+        alt=""
+      />
     </li>
   )
 }
