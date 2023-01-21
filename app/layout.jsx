@@ -17,7 +17,9 @@ export default function RootLayout({ children }) {
         head.jsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
       <head />
-      <body className={`max-w-6xl m-auto ${roboto.variable} font-sans`}>
+      <body
+        className={`max-w-md lg:max-w-2xl 2xl:max-w-4xl m-auto ${roboto.variable} font-sans bg-gray-200`}
+      >
         <AuthContext>
           <Nav />
           {children}
