@@ -39,7 +39,7 @@ export default function CreatePost() {
 
     setTitle("")
     setIsDisabled(false)
-    // router.refresh()
+    router.refresh()
   }
   return (
     <form onSubmit={submitPost} className="bg-gray-200 my-8 ">
