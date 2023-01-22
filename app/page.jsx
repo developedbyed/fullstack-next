@@ -2,6 +2,8 @@ import prisma from "../prisma/client"
 import Post from "./Post"
 import AddPost from "./AddPost"
 
+export const revalidate = 0
+
 export default async function Home() {
   const data = await prisma.post.findMany({
     include: {
