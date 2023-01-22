@@ -1,11 +1,20 @@
+export const dynamic = "force-dynamic"
+
+import prisma from "../prisma/client"
 import Post from "./Post"
 import AddPost from "./AddPost"
 
 export default async function Home() {
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/posts/getPosts`, {
-    next: { revalidate: 0 },
+  const data = await prisma.post.findMany({
+    include: {
+      user: true,
+      comments: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
   })
-  const data = await res.json()
+
   return (
     <div>
       <AddPost />
