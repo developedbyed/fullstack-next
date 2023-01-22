@@ -19,10 +19,6 @@ export default function Post({ id, name, avatar, postTitle, comments, likes }) {
             {comments.length} Comments
           </p>
         </Link>
-        {/* <div className="flex items-center gap-2 cursor-pointer">
-          <p>{likes}</p>
-          <AiFillHeart />
-        </div> */}
       </div>
     </div>
   )

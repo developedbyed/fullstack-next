@@ -3,12 +3,13 @@ import Post from "../../Post"
 import AddComment from "../../AddComment"
 import Image from "next/image"
 
-export async function generateStaticParams() {
-  const posts = await prisma.post.findMany()
-  return posts.map((post) => ({
-    slug: post.id,
-  }))
-}
+//Enable for production
+// export async function generateStaticParams() {
+//   const posts = await prisma.post.findMany()
+//   return posts.map((post) => ({
+//     slug: post.id,
+//   }))
+// }
 
 export default async function PostDetail({ params }) {
   const data = await prisma.post.findUnique({
