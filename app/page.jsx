@@ -2,7 +2,9 @@ import prisma from "../prisma/client"
 import Post from "./Post"
 import AddPost from "./AddPost"
 
-export default async function Home() {
+export const dynamic = "force-dynamic"
+
+async function getPosts() {
   const data = await prisma.post.findMany({
     include: {
       user: true,
@@ -12,7 +14,12 @@ export default async function Home() {
       createdAt: "desc",
     },
   })
-  console.log(data)
+  console.log("ran again!")
+  return data
+}
+
+export default async function Home() {
+  const data = await getPosts()
   return (
     <div>
       <AddPost />

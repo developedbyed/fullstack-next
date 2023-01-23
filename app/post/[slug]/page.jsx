@@ -11,6 +11,8 @@ export async function generateStaticParams() {
   }))
 }
 
+export const dynamic = "force-dynamic"
+
 export default async function PostDetail({ params }) {
   const data = await prisma.post.findUnique({
     where: {
