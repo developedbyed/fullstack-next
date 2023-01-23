@@ -18,11 +18,13 @@ export default async function MyPosts({ email }) {
     },
   })
 
+  console.log(data)
   return (
     <div>
       {data.posts.map((post) => (
         <EditPost
           id={post.id}
+          key={post.id}
           avatar={data.image}
           name={data.name}
           title={post.title}

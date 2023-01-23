@@ -38,7 +38,7 @@ model Post {
 
 model Comment {
   id     String @id @default(cuid())
-  post   Post   @relation(fields: [postId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   user   User   @relation(fields: [userId], references: [id])
   title  String
   postId String

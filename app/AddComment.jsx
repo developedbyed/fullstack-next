@@ -35,12 +35,9 @@ export default function AddComment({ id }) {
         setCommentError(result.message)
       }
 
-      console.log(comment)
       setCommentError(result)
       return result
-    } catch (error) {
-      console.log(error)
-    }
+    } catch (error) {}
 
     setTitle("")
     setIsDisabled(false)

@@ -17,6 +17,7 @@ export default async function handler(req, res) {
           id: postId,
         },
       })
+
       res.status(200).json(result)
     } catch (err) {
       res.status(403).json({ err: "Error has occured while deleting a post" })

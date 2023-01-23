@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic"
-
 import prisma from "../prisma/client"
 import Post from "./Post"
 import AddPost from "./AddPost"
@@ -14,7 +12,7 @@ export default async function Home() {
       createdAt: "desc",
     },
   })
-
+  console.log(data)
   return (
     <div>
       <AddPost />
