@@ -3,36 +3,29 @@
 import Image from "next/image"
 import { useState } from "react"
 import Toggle from "./Toggle"
-import { useRouter } from "next/navigation"
+import { useMutation, useQueryClient } from "react-query"
 
 export default function EditPost({ avatar, name, title, comments, id }) {
   const [toggle, setToggle] = useState(false)
-  const router = useRouter()
+
+  const queryClient = useQueryClient()
+  const mutation = useMutation((id) => {
+    return fetch("/api/posts/deletePost", {
+      method: "DELETE",
+      body: JSON.stringify({ postId: id }),
+    })
+  })
 
   const deletePost = async () => {
-    console.log("deleteee")
-    try {
-      const post = await fetch("/api/posts/deletePost", {
-        method: "DELETE",
-        body: JSON.stringify({ postId: id }),
-      })
-      if (!post.ok) {
-        const result = await post.json()
-        console.log(result)
-      }
-      console.log(result)
-    } catch (error) {}
-    router.refresh()
+    mutation.mutate(id, {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["getAuthPosts"])
+      },
+    })
   }
 
   return (
-    <div
-      onClick={(e) => {
-        e.stopPropagation()
-        setToggle(false)
-      }}
-      className="bg-white my-8 p-8 rounded-lg "
-    >
+    <div className="bg-white my-8 p-8 rounded-lg ">
       <div className="flex items-center gap-2">
         <Image width={32} height={32} src={avatar} alt="avatar" />
         <h3 className="font-bold text-gray-700">{name}</h3>
@@ -40,7 +33,7 @@ export default function EditPost({ avatar, name, title, comments, id }) {
       <div className="my-8 ">
         <p className="break-all">{title}</p>
       </div>
-      <div className="flex items-center gap-4 cursor-pointer">
+      <div className="flex items-center gap-4 ">
         <p className=" text-sm font-bold text-gray-700">
           {comments.length} Comments
         </p>
@@ -53,7 +46,7 @@ export default function EditPost({ avatar, name, title, comments, id }) {
         >
           Delete
         </button>
-        {toggle && <Toggle deletePost={deletePost} />}
+        {toggle && <Toggle deletePost={deletePost} setToggle={setToggle} />}
       </div>
     </div>
   )

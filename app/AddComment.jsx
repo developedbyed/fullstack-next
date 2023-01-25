@@ -1,14 +1,20 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useMutation, useQueryClient } from "react-query"
 
 export default function AddComment({ id }) {
   const [title, setTitle] = useState("")
   const [isDisabled, setIsDisabled] = useState(false)
   const [commentError, setCommentError] = useState("")
 
-  const router = useRouter()
+  const queryClient = useQueryClient()
+  const mutation = useMutation((data) => {
+    return fetch("/api/posts/addComment", {
+      method: "POST",
+      body: JSON.stringify({ data }),
+    })
+  })
 
   const submitPost = async (e) => {
     e.preventDefault()
@@ -25,23 +31,16 @@ export default function AddComment({ id }) {
       setIsDisabled(false)
       return
     }
-    try {
-      const comment = await fetch("/api/posts/addComment", {
-        method: "POST",
-        body: JSON.stringify({ title, postId: id }),
-      })
-      if (!comment.ok) {
-        const result = await comment.json()
-        setCommentError(result.message)
+    mutation.mutate(
+      { title, postId: id },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries(["getDetails"])
+          setTitle("")
+          setIsDisabled(false)
+        },
       }
-
-      setCommentError(result)
-      return result
-    } catch (error) {}
-
-    setTitle("")
-    setIsDisabled(false)
-    router.refresh()
+    )
   }
   return (
     <form onSubmit={submitPost} className="my-8">

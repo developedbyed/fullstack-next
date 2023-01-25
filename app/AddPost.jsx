@@ -1,19 +1,24 @@
 "use client"
 
+import { useMutation, useQueryClient } from "react-query"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
-
 export default function CreatePost() {
   const [title, setTitle] = useState("")
   const [isDisabled, setIsDisabled] = useState(false)
   const [postError, setPostError] = useState("")
 
-  const router = useRouter()
+  const queryClient = useQueryClient()
+  const mutation = useMutation((data) => {
+    return fetch("/api/posts/addPost", {
+      method: "POST",
+      body: JSON.stringify({ data }),
+    })
+  })
 
   const submitPost = async (e) => {
     e.preventDefault()
     setIsDisabled(true)
-    //Check post
+    // //Check post
     if (!title) {
       setPostError("This field cannot be left empty")
       setTitle("")
@@ -25,22 +30,15 @@ export default function CreatePost() {
       setIsDisabled(false)
       return
     }
-    try {
-      const post = await fetch("/api/posts/addPost", {
-        method: "POST",
-        body: JSON.stringify({ title }),
-      })
-      if (!post.ok) {
-        const result = await post.json()
-        setPostError(result.message)
-      }
-      return result
-    } catch (error) {}
-
-    setTitle("")
-    setIsDisabled(false)
-    router.refresh()
+    mutation.mutate(title, {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["getPosts"])
+        setTitle("")
+        setIsDisabled(false)
+      },
+    })
   }
+
   return (
     <form onSubmit={submitPost} className="bg-gray-200 my-8 ">
       <div className="flex flex-col my-4">

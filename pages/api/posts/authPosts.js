@@ -8,22 +8,25 @@ export default async function handler(req, res) {
     return res.status(401).json({ message: "Please signin to create a post." })
   }
 
-  const { data } = JSON.parse(req.body)
-  //Get User
-  const prismaUser = await prisma.user.findUnique({
-    where: { email: session.user.email },
-  })
-
-  if (req.method === "POST") {
+  if (req.method === "GET") {
     try {
-      const result = await prisma.post.create({
-        data: {
-          title: data,
-          userId: prismaUser.id,
+      const data = await prisma.user.findUnique({
+        where: {
+          email: session.user.email,
+        },
+        include: {
+          posts: {
+            orderBy: {
+              createdAt: "desc",
+            },
+            include: {
+              comments: true,
+            },
+          },
         },
       })
-      console.log(result)
-      res.status(200).json(result)
+
+      return res.status(200).json(data)
     } catch (err) {
       res.status(403).json({ err: "Error has occured while making a post" })
     }

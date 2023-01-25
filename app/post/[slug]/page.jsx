@@ -1,33 +1,23 @@
-import prisma from "../../../prisma/client"
+"use client"
+
 import Post from "../../Post"
 import AddComment from "../../AddComment"
 import Image from "next/image"
+import { useQuery } from "react-query"
 
-//Enable for production
-export async function generateStaticParams() {
-  const posts = await prisma.post.findMany()
-  return posts.map((post) => ({
-    slug: post.id,
-  }))
+const getDetails = async (slug) => {
+  const data = await fetch(`/api/posts/${slug}`)
+  const res = await data.json()
+  return res
 }
 
-export const dynamic = "force-dynamic"
+export default function PostDetail({ params }) {
+  const { slug } = params
+  const { data, error, isLoading } = useQuery("getDetails", () =>
+    getDetails(slug)
+  )
 
-export default async function PostDetail({ params }) {
-  const data = await prisma.post.findUnique({
-    where: {
-      id: params?.slug,
-    },
-    include: {
-      user: true,
-      comments: {
-        include: {
-          user: true,
-        },
-      },
-    },
-  })
-
+  if (isLoading) return "Loading"
   return (
     <div>
       <Post

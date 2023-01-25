@@ -2,7 +2,7 @@ import "./globals.css"
 import Nav from "./Nav"
 import { Roboto } from "@next/font/google"
 import AuthContext from "./auth/AuthContext"
-
+import QueryWrapper from "./QueryWrapper"
 const roboto = Roboto({
   subsets: ["latin"],
   weight: ["400", "700"],
@@ -20,10 +20,12 @@ export default function RootLayout({ children }) {
       <body
         className={`max-w-md lg:max-w-2xl 2xl:max-w-4xl m-auto ${roboto.variable} font-sans bg-gray-200`}
       >
-        <AuthContext>
-          <Nav />
-          {children}
-        </AuthContext>
+        <QueryWrapper>
+          <AuthContext>
+            <Nav />
+            {children}
+          </AuthContext>
+        </QueryWrapper>
       </body>
     </html>
   )

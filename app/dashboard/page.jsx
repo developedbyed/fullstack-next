@@ -12,7 +12,7 @@ export default async function Home() {
   return (
     <main>
       <h1 className="text-2xl font-bold">Welcome back {session.user.name}</h1>
-      <MyPosts email={session.user.email} />
+      <MyPosts />
     </main>
   )
 }

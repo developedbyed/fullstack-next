@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ message: "Please signin to post a comment." })
   }
 
-  const { title, postId } = JSON.parse(req.body)
+  const info = JSON.parse(req.body)
   //Get User
   const prismaUser = await prisma.user.findUnique({
     where: { email: session.user.email },
@@ -17,9 +17,9 @@ export default async function handler(req, res) {
     try {
       const result = await prisma.comment.create({
         data: {
-          title,
+          title: info.data.title,
           userId: prismaUser.id,
-          postId,
+          postId: info.data.postId,
         },
       })
       res.status(200).json(result)

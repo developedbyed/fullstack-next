@@ -1,24 +1,18 @@
-import prisma from "../../prisma/client"
+"use client"
+
 import EditPost from "./EditPost"
+import { useQuery } from "react-query"
 
-export default async function MyPosts({ email }) {
-  const data = await prisma.user.findUnique({
-    where: {
-      email: email,
-    },
-    include: {
-      posts: {
-        orderBy: {
-          createdAt: "desc",
-        },
-        include: {
-          comments: true,
-        },
-      },
-    },
-  })
-
-  console.log(data)
+export default function MyPosts() {
+  const getAuthPosts = async () => {
+    const data = await fetch("/api/posts/authPosts")
+    const res = await data.json()
+    return res
+  }
+  const { data, error, isLoading } = useQuery("getAuthPosts", getAuthPosts)
+  if (error) return error
+  if (isLoading) return "Loading....."
+  if (data) console.log(data)
   return (
     <div>
       {data.posts.map((post) => (
