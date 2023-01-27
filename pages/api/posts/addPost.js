@@ -7,22 +7,33 @@ export default async function handler(req, res) {
   if (!session) {
     return res.status(401).json({ message: "Please signin to create a post." })
   }
-
-  const { data } = JSON.parse(req.body)
+  const { title } = req.body
+  console.log(title)
   //Get User
   const prismaUser = await prisma.user.findUnique({
     where: { email: session.user.email },
   })
 
   if (req.method === "POST") {
+    //Check title
+    if (title.length > 300) {
+      return res.status(403).json({ message: "Please write a shorter post" })
+    }
+
+    if (!title.length) {
+      return res
+        .status(403)
+        .json({ message: "Please write something before we can post it." })
+    }
+
+    //Create Post
     try {
       const result = await prisma.post.create({
         data: {
-          title: data,
+          title,
           userId: prismaUser.id,
         },
       })
-      console.log(result)
       res.status(200).json(result)
     } catch (err) {
       res.status(403).json({ err: "Error has occured while making a post" })

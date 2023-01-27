@@ -7,19 +7,22 @@ export default async function handler(req, res) {
   if (!session) {
     return res.status(401).json({ message: "Please signin to post a comment." })
   }
-
-  const info = JSON.parse(req.body)
   //Get User
   const prismaUser = await prisma.user.findUnique({
     where: { email: session.user.email },
   })
   if (req.method === "POST") {
+    const { title, postId } = req.body.data
+    console.log(title, postId)
+    if (!title.length) {
+      return res.status(401).json({ message: "Please enter some text" })
+    }
     try {
       const result = await prisma.comment.create({
         data: {
-          title: info.data.title,
+          title,
           userId: prismaUser.id,
-          postId: info.data.postId,
+          postId,
         },
       })
       res.status(200).json(result)

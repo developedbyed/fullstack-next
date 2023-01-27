@@ -4,32 +4,27 @@ import Post from "../../Post"
 import AddComment from "../../AddComment"
 import Image from "next/image"
 import { useQuery } from "react-query"
-
-const getDetails = async (slug) => {
-  const data = await fetch(`/api/posts/${slug}`)
-  const res = await data.json()
-  return res
-}
+import axios from "axios"
 
 export default function PostDetail({ params }) {
   const { slug } = params
-  const { data, error, isLoading } = useQuery("getDetails", () =>
-    getDetails(slug)
+  const { data, error, isLoading } = useQuery(
+    "getDetails",
+    async () => await axios.get(`/api/posts/${slug}`)
   )
-
   if (isLoading) return "Loading"
   return (
     <div>
       <Post
-        id={data.id}
-        name={data.user.name}
-        avatar={data.user.image}
-        likes={data.likes}
-        postTitle={data.title}
-        comments={data.comments}
+        id={data.data.id}
+        name={data.data.user.name}
+        avatar={data.data.user.image}
+        likes={data.data.likes}
+        postTitle={data.data.title}
+        comments={data.data.comments}
       />
-      <AddComment id={data.id} />
-      {data.comments.map((comment) => (
+      <AddComment id={data.data.id} />
+      {data.data.comments.map((comment) => (
         <div className="my-6" key={comment.id}>
           <div className="flex items-center gap-2">
             <Image

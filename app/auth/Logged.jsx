@@ -7,7 +7,12 @@ import Link from "next/link"
 export default function Logged({ image }) {
   return (
     <li className="flex gap-8">
-      <button onClick={() => signOut()}>Sign Out</button>
+      <button
+        className="bg-gray-700 text-white text-sm px-8 rounded-md"
+        onClick={() => signOut()}
+      >
+        Sign Out
+      </button>
       <Link href={"/dashboard"}>
         <Image
           width={64}

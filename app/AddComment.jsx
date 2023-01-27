@@ -2,45 +2,51 @@
 
 import { useState } from "react"
 import { useMutation, useQueryClient } from "react-query"
+import axios from "axios"
+import toast from "react-hot-toast"
 
 export default function AddComment({ id }) {
   const [title, setTitle] = useState("")
   const [isDisabled, setIsDisabled] = useState(false)
-  const [commentError, setCommentError] = useState("")
-
+  let commentToastId
   const queryClient = useQueryClient()
-  const mutation = useMutation((data) => {
-    return fetch("/api/posts/addComment", {
-      method: "POST",
-      body: JSON.stringify({ data }),
-    })
-  })
+  const { mutate } = useMutation(
+    async (data) => {
+      return axios.post("/api/posts/addComment", { data })
+    },
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["getDetails"])
+        console.log(data)
+        setTitle("")
+        setIsDisabled(false)
+        toast.success("Added your comment", { id: commentToastId })
+      },
+      onError: (error) => {
+        console.log(error)
+        setIsDisabled(false)
+        toast.error(error.response.data.message, { id: commentToastId })
+      },
+    }
+  )
 
   const submitPost = async (e) => {
     e.preventDefault()
     setIsDisabled(true)
-    //Check comment
-    if (!title) {
-      setCommentError("This field cannot be left empty")
-      setTitle("")
-      setIsDisabled(false)
-      return
-    }
-    if (title.length > 300) {
-      setCommentError("Make sure your post is not more that 300 characters")
-      setIsDisabled(false)
-      return
-    }
-    mutation.mutate(
-      { title, postId: id },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries(["getDetails"])
-          setTitle("")
-          setIsDisabled(false)
-        },
-      }
-    )
+    commentToastId = toast.loading("Adding your comment", {
+      id: commentToastId,
+    })
+    mutate({ title, postId: id })
+    // mutate.mutate(
+    //   { title, postId: id },
+    //   {
+    //     onSuccess: () => {
+    //       queryClient.invalidateQueries(["getDetails"])
+    //       setTitle("")
+    //       setIsDisabled(false)
+    //     },
+    //   }
+    // )
   }
   return (
     <form onSubmit={submitPost} className="my-8">
@@ -69,8 +75,6 @@ export default function AddComment({ id }) {
           } `}
         >{`${title.length}/300`}</p>
       </div>
-
-      {commentError && <h2 className="text-red-700 mt-4">{commentError}</h2>}
     </form>
   )
 }

@@ -3,23 +3,20 @@
 import Post from "./Post"
 import AddPost from "./AddPost"
 import { useQuery } from "react-query"
-import { useState } from "react"
-
-const getPosts = async () => {
-  const data = await fetch("/api/posts/getPosts")
-  const res = await data.json()
-  return res
-}
+import axios from "axios"
 
 export default function Home() {
-  const { data, error, isLoading } = useQuery("getPosts", getPosts)
+  const { data, error, isLoading } = useQuery(
+    "posts",
+    async () => await axios.get("/api/posts/getPosts")
+  )
   if (error) return error
   if (isLoading) return "Loading....."
-  if (data)
+  if (data.data)
     return (
       <div>
         <AddPost />
-        {data.map((post) => (
+        {data.data.map((post) => (
           <Post
             key={post.id}
             id={post.id}
@@ -30,7 +27,6 @@ export default function Home() {
             likes={post.likes}
           />
         ))}
-        <h1>Posts</h1>
       </div>
     )
 }

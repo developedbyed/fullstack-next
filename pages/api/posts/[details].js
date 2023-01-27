@@ -2,9 +2,7 @@ import prisma from "../../../prisma/client"
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
-    console.log(req.query)
     try {
-      console.log(req.query)
       const data = await prisma.post.findUnique({
         where: {
           id: req.query.details,

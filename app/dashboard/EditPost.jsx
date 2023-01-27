@@ -4,24 +4,31 @@ import Image from "next/image"
 import { useState } from "react"
 import Toggle from "./Toggle"
 import { useMutation, useQueryClient } from "react-query"
+import toast from "react-hot-toast"
+import axios from "axios"
 
 export default function EditPost({ avatar, name, title, comments, id }) {
   const [toggle, setToggle] = useState(false)
-
   const queryClient = useQueryClient()
-  const mutation = useMutation((id) => {
-    return fetch("/api/posts/deletePost", {
-      method: "DELETE",
-      body: JSON.stringify({ postId: id }),
-    })
-  })
+  let deleteToastID
 
-  const deletePost = async () => {
-    mutation.mutate(id, {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["getAuthPosts"])
+  const { mutate } = useMutation(
+    async (id) => await axios.delete("/api/posts/deletePost", { data: id }),
+    {
+      onError: (error) => {
+        console.log(error)
       },
-    })
+      onSuccess: (data) => {
+        console.log(data)
+        queryClient.invalidateQueries("getAuthPosts")
+        toast.success("Post has been deleted.", { id: deleteToastID })
+      },
+    }
+  )
+
+  const deletePost = () => {
+    deleteToastID = toast.loading("Deleting your post.", { id: deleteToastID })
+    mutate(id)
   }
 
   return (

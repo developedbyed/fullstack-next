@@ -2,70 +2,66 @@
 
 import { useMutation, useQueryClient } from "react-query"
 import { useState } from "react"
+import toast from "react-hot-toast"
+import axios from "axios"
+
 export default function CreatePost() {
   const [title, setTitle] = useState("")
   const [isDisabled, setIsDisabled] = useState(false)
-  const [postError, setPostError] = useState("")
-
   const queryClient = useQueryClient()
-  const mutation = useMutation((data) => {
-    return fetch("/api/posts/addPost", {
-      method: "POST",
-      body: JSON.stringify({ data }),
-    })
-  })
+  let toastPostID
 
-  const submitPost = async (e) => {
-    e.preventDefault()
-    setIsDisabled(true)
-    // //Check post
-    if (!title) {
-      setPostError("This field cannot be left empty")
-      setTitle("")
-      setIsDisabled(false)
-      return
-    }
-    if (title.length > 300) {
-      setPostError("Make sure your post is not more that 300 characters")
-      setIsDisabled(false)
-      return
-    }
-    mutation.mutate(title, {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["getPosts"])
+  //Create a post
+  const { mutate } = useMutation(
+    async (title) =>
+      await axios.post("/api/posts/addPost", {
+        title,
+      }),
+    {
+      onError: (error) => {
+        toast.error(error.response.data.message, { id: toastPostID })
+      },
+      onSuccess: (data) => {
+        queryClient.invalidateQueries("posts")
+        toast.success("Post has been made 🔥", { id: toastPostID })
         setTitle("")
         setIsDisabled(false)
       },
-    })
+    }
+  )
+  const submitPost = async (e) => {
+    e.preventDefault()
+    setIsDisabled(true)
+    toastPostID = toast.loading("Creating your post", { id: toastPostID })
+    mutate(title)
   }
 
   return (
-    <form onSubmit={submitPost} className="bg-gray-200 my-8 ">
+    <form onSubmit={submitPost} className="bg-white my-8 p-8 rounded-md ">
       <div className="flex flex-col my-4">
-        <input
+        <textarea
           onChange={(e) => setTitle(e.target.value)}
           value={title}
           type="text"
           name="title"
           placeholder="What's on your mind?"
-          className="p-4 text-lg rounded-md my-2 "
+          className="p-4 text-lg rounded-md my-2  bg-gray-200"
         />
       </div>
-      <div className=" flex items-center gap-2">
-        <button
-          disabled={isDisabled}
-          className=" bg-cyan-700 text-white py-2 px-6 disabled:opacity-25"
-          type="submit"
-        >
-          Create post 🚀
-        </button>
+      <div className=" flex items-center justify-between gap-2">
         <p
-          className={`font-bold  ${
+          className={`font-bold text-sm ${
             title.length > 300 ? "text-red-700" : "text-gray-700"
           } `}
         >{`${title.length}/300`}</p>
+        <button
+          disabled={isDisabled}
+          className="text-sm bg-teal-600 text-white py-2 px-6 rounded-xl disabled:opacity-25"
+          type="submit"
+        >
+          Create post
+        </button>
       </div>
-      {postError && <h2 className="text-red-700 mt-4">{postError}</h2>}
     </form>
   )
 }

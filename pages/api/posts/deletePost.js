@@ -7,10 +7,8 @@ export default async function handler(req, res) {
   if (!session) {
     return res.status(401).json({ message: "Please signin to create a post." })
   }
-
-  const { postId } = JSON.parse(req.body)
-
   if (req.method === "DELETE") {
+    const postId = req.body
     try {
       const result = await prisma.post.delete({
         where: {
