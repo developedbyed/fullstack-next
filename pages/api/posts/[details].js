@@ -9,7 +9,11 @@ export default async function handler(req, res) {
         },
         include: {
           user: true,
+          hearts: true,
           comments: {
+            orderBy: {
+              createdAt: "desc",
+            },
             include: {
               user: true,
             },

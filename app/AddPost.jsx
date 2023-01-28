@@ -20,6 +20,7 @@ export default function CreatePost() {
     {
       onError: (error) => {
         toast.error(error.response.data.message, { id: toastPostID })
+        setIsDisabled(false)
       },
       onSuccess: (data) => {
         queryClient.invalidateQueries("posts")

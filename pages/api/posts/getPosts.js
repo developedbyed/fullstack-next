@@ -7,6 +7,7 @@ export default async function handler(req, res) {
         include: {
           user: true,
           comments: true,
+          hearts: true,
         },
         orderBy: {
           createdAt: "desc",
