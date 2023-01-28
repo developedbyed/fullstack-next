@@ -15,7 +15,7 @@ export default function Home() {
   if (data.data)
     return (
       <div>
-        <AddPost />
+        <AddPost />-
         {data.data.map((post) => (
           <Post
             key={post.id}

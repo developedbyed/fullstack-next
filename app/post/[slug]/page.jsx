@@ -6,6 +6,13 @@ import Image from "next/image"
 import { useQuery } from "react-query"
 import axios from "axios"
 
+export async function generateStaticParams() {
+  const posts = await axios.get(`/api/posts/getPosts`)
+  return posts.map((post) => ({
+    slug: post.slug,
+  }))
+}
+
 export default function PostDetail({ params }) {
   const { slug } = params
   const { data, error, isLoading } = useQuery(
@@ -20,6 +27,7 @@ export default function PostDetail({ params }) {
         name={data.data.user.name}
         avatar={data.data.user.image}
         likes={data.data.likes}
+        np
         postTitle={data.data.title}
         comments={data.data.comments}
       />
