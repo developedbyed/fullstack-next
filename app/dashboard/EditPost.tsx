@@ -7,13 +7,33 @@ import { useMutation, useQueryClient } from "react-query"
 import toast from "react-hot-toast"
 import axios from "axios"
 
-export default function EditPost({ avatar, name, title, comments, id }) {
+interface EditProps {
+  id: string
+  avatar: string
+  name: string
+  title: string
+  comments?: Comments[]
+}
+interface Comments {
+  id: string
+  postId: string
+  userId: string
+}
+
+export default function EditPost({
+  avatar,
+  name,
+  title,
+  comments,
+  id,
+}: EditProps) {
   const [toggle, setToggle] = useState(false)
   const queryClient = useQueryClient()
-  let deleteToastID
+  let deleteToastID: string
 
   const { mutate } = useMutation(
-    async (id) => await axios.delete("/api/posts/deletePost", { data: id }),
+    async (id: string) =>
+      await axios.delete("/api/posts/deletePost", { data: id }),
     {
       onError: (error) => {
         console.log(error)
@@ -42,7 +62,7 @@ export default function EditPost({ avatar, name, title, comments, id }) {
       </div>
       <div className="flex items-center gap-4 ">
         <p className=" text-sm font-bold text-gray-700">
-          {comments.length} Comments
+          {comments?.length} Comments
         </p>
         <button
           onClick={(e) => {

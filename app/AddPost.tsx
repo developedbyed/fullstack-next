@@ -3,34 +3,36 @@
 import { useMutation, useQueryClient } from "react-query"
 import { useState } from "react"
 import toast from "react-hot-toast"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 
 export default function CreatePost() {
   const [title, setTitle] = useState("")
   const [isDisabled, setIsDisabled] = useState(false)
   const queryClient = useQueryClient()
-  let toastPostID
+  let toastPostID: string
 
   //Create a post
   const { mutate } = useMutation(
-    async (title) =>
+    async (title: string) =>
       await axios.post("/api/posts/addPost", {
         title,
       }),
     {
       onError: (error) => {
-        toast.error(error.response.data.message, { id: toastPostID })
+        if (error instanceof AxiosError) {
+          toast.error(error?.response?.data.message, { id: toastPostID })
+        }
         setIsDisabled(false)
       },
       onSuccess: (data) => {
-        queryClient.invalidateQueries("posts")
+        queryClient.invalidateQueries(["posts"])
         toast.success("Post has been made 🔥", { id: toastPostID })
         setTitle("")
         setIsDisabled(false)
       },
     }
   )
-  const submitPost = async (e) => {
+  const submitPost = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsDisabled(true)
     toastPostID = toast.loading("Creating your post", { id: toastPostID })
@@ -43,7 +45,6 @@ export default function CreatePost() {
         <textarea
           onChange={(e) => setTitle(e.target.value)}
           value={title}
-          type="text"
           name="title"
           placeholder="What's on your mind?"
           className="p-4 text-lg rounded-md my-2  bg-gray-200"
