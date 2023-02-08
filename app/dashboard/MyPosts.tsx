@@ -2,35 +2,19 @@
 
 import EditPost from "./EditPost"
 import { useQuery } from "react-query"
+import axios from "axios"
+import { AuthPosts } from "../types/AuthPosts"
 
-interface UserProp {
-  email: string
-  id: string
-  image: string
-  name: string
-  posts?: Posts[]
-}
-interface Posts {
-  createdAt: string
-  id: string
-  title: string
-  comments?: Comments[]
-}
-interface Comments {
-  createdAt: string
-  id: string
-  postId: string
-  title: string
-  userId: string
+const fetchAuthPosts = async () => {
+  const response = await axios.get("/api/posts/authPosts")
+  return response.data
 }
 
 export default function MyPosts(): JSX.Element {
-  const getAuthPosts = async (): Promise<UserProp> => {
-    const data = await fetch("/api/posts/authPosts")
-    const res = await data.json()
-    return res
-  }
-  const { data, isLoading } = useQuery("getAuthPosts", getAuthPosts)
+  const { data, isLoading } = useQuery<AuthPosts>(
+    "getAuthPosts",
+    fetchAuthPosts
+  )
   if (isLoading) return <h1>Posts are loading...</h1>
   if (data) console.log(data)
   return (

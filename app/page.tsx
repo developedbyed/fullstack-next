@@ -3,36 +3,18 @@
 import Post from "./Post"
 import AddPost from "./AddPost"
 import { useQuery } from "react-query"
-
-//Interface
-interface User {
-  name: string
-  image: string
-}
-interface Comments {
-  createdAt: string
-  id: string
-  postId: string
-  title: string
-  userId: string
-}
-interface PostsType {
-  title: string
-  id: string
-  createdAt?: string
-  comments?: Comments[]
-  user: User
-}
+import axios from "axios"
+import { PostsType } from "./types/Posts"
 
 //Fetch All posts
-const fetchPosts = async (): Promise<PostsType[]> => {
-  const res = await fetch("/api/posts/getPosts")
-  return res.json()
+const allPosts = async () => {
+  const response = await axios.get("/api/posts/getPosts")
+  return response.data
 }
 
 export default function Home() {
-  const { data, error, isLoading } = useQuery({
-    queryFn: fetchPosts,
+  const { data, error, isLoading } = useQuery<PostsType[]>({
+    queryFn: allPosts,
     queryKey: ["posts"],
   })
   if (error) return error

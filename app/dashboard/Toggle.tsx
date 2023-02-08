@@ -1,6 +1,11 @@
 "use client"
 
-export default function Toggle({ deletePost, setToggle }) {
+type ToggleProps = {
+  deletePost: () => void
+  setToggle: (toggle: boolean) => void
+}
+
+export default function Toggle({ deletePost, setToggle }: ToggleProps) {
   return (
     <div
       onClick={(e) => {

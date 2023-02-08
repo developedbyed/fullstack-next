@@ -3,19 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
 
-interface Post {
-  id: string
-  name: string
-  avatar: string
-  postTitle: string
-  comments?: Comment[]
-}
-interface Comment {
-  id: string
-  title: string
-}
-
-export default function Post({ id, name, avatar, postTitle, comments }: Post) {
+export default function Post({ id, name, avatar, postTitle, comments }) {
   return (
     <motion.div
       animate={{ opacity: 1, scale: 1 }}

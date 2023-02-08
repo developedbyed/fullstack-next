@@ -4,7 +4,11 @@ import Image from "next/image"
 import { signOut } from "next-auth/react"
 import Link from "next/link"
 
-export default function Logged({ image }) {
+type User = {
+  image: string
+}
+
+export default function Logged({ image }: User) {
   return (
     <li className="flex gap-8 items-center">
       <button

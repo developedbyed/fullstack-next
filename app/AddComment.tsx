@@ -4,17 +4,18 @@ import { useState } from "react"
 import { useMutation, useQueryClient } from "react-query"
 import axios, { AxiosError } from "axios"
 import toast from "react-hot-toast"
+import { PostType } from "./types/Post"
 
-type PostID = {
-  id: string
-}
 type Comment = {
-  postId: string
+  postId?: string
   title: string
 }
-
-export default function AddComment({ id }: PostID) {
+type PostProps = {
+  id?: string
+}
+export default function AddComment({ id }: PostProps) {
   let commentToastId: string
+  console.log(id)
   const [title, setTitle] = useState("")
   const [isDisabled, setIsDisabled] = useState(false)
 
@@ -26,7 +27,6 @@ export default function AddComment({ id }: PostID) {
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries(["detail-post"])
-        console.log(data)
         setTitle("")
         setIsDisabled(false)
         toast.success("Added your comment", { id: commentToastId })
@@ -65,7 +65,7 @@ export default function AddComment({ id }: PostID) {
       <div className="flex items-center gap-2">
         <button
           disabled={isDisabled}
-          className=" bg-cyan-700 text-white py-2 px-6 disabled:opacity-25"
+          className=" text-sm bg-teal-600 text-white py-2 px-6 rounded-xl disabled:opacity-25"
           type="submit"
         >
           Add Comment 🚀
