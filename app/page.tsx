@@ -17,11 +17,13 @@ export default function Home() {
     queryFn: allPosts,
     queryKey: ["posts"],
   })
-  if (error) return error
-  if (isLoading) return "Loading....."
 
   return (
     <div>
+      <>
+        {error && error}
+        {isLoading && "Loading..."}
+      </>
       <AddPost />
       {data?.map((post) => (
         <Post
